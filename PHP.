@@ -1,0 +1,26 @@
+<?php
+$host = '186.102.76.134';
+$user = 'Jefer';
+$pass = 'jefer1102518146';
+$db   = 'Mi_base_datos';
+
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+$mensaje = $_POST['mensaje'] ?? '';
+
+if (!empty($mensaje)) {
+    $sql = "INSERT INTO mensajes (contenido) VALUES (?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $mensaje);
+    $stmt->execute();
+    echo "Mensaje guardado";
+} else {
+    echo "Mensaje vacío";
+}
+
+$conn->close();
+?>
