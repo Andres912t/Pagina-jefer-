@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para María ❤️</title>
     <style>
         body {
@@ -47,7 +46,6 @@
         .content {
             margin-left: 270px;
             padding: 20px;
-            width: 100%;
         }
 
         .container {
@@ -101,6 +99,20 @@
         button:hover {
             background-color: #ff85c0;
         }
+
+        #bandeja {
+            background: #fff0f5;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        #bandeja p {
+            background: #ffe6ec;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -130,11 +142,7 @@
             <h2>💌 Enviar Mensajes 💌</h2>
             <textarea id="mensaje" placeholder="Escribe un mensaje bonito para María..."></textarea>
             <button onclick="enviarMensajeAMaria()">Enviar a María 💖</button>
-        </section>
-
-        <section class="container" id="bandeja">
-            <h2>💬 Mensajes Recibidos</h2>
-            <!-- Aquí se muestran los mensajes -->
+            <div id="bandeja"></div>
         </section>
 
         <section id="quimica" class="container">
@@ -145,39 +153,39 @@
     </div>
 
     <script>
-    function enviarMensajeAMaria() {
-        let mensaje = document.getElementById('mensaje').value;
-
-        if (mensaje.trim() !== '') {
-            fetch('guardar.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'mensaje=' + encodeURIComponent(mensaje)
-            }).then(() => {
-                document.getElementById('mensaje').value = '';
-                cargarMensajes();
-            });
-        } else {
-            alert("Escribe un mensaje antes de enviarlo.");
-        }
-    }
-
-    function cargarMensajes() {
-        fetch('mensajes.php')
-            .then(res => res.json())
-            .then(data => {
-                let contenedor = document.getElementById('bandeja');
-                contenedor.innerHTML = '<h2>💬 Mensajes Recibidos</h2>';
-                data.forEach(msg => {
-                    let p = document.createElement('p');
-                    p.textContent = msg;
-                    contenedor.appendChild(p);
+        function enviarMensajeAMaria() {
+            let mensaje = document.getElementById('mensaje').value;
+            if (mensaje.trim() !== '') {
+                fetch('guardar_mensaje.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'mensaje=' + encodeURIComponent(mensaje)
+                }).then(res => res.text()).then(data => {
+                    console.log(data);
+                    cargarMensajes();
+                    document.getElementById('mensaje').value = '';
                 });
-            });
-    }
+            } else {
+                alert("Escribe un mensaje antes de enviarlo.");
+            }
+        }
 
-    setInterval(cargarMensajes, 3000);
-    window.onload = cargarMensajes;
+        function cargarMensajes() {
+            fetch('obtener_mensajes.php')
+                .then(res => res.json())
+                .then(data => {
+                    let contenedor = document.getElementById('bandeja');
+                    contenedor.innerHTML = '';
+                    data.forEach(m => {
+                        let p = document.createElement('p');
+                        p.textContent = m;
+                        contenedor.appendChild(p);
+                    });
+                });
+        }
+
+        setInterval(cargarMensajes, 3000);
+        window.onload = cargarMensajes;
     </script>
 </body>
 </html>
