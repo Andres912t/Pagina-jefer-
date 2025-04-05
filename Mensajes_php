@@ -1,0 +1,21 @@
+<?php
+$host = '186.102.76.134';
+$user = 'Jefer';
+$pass = 'jefer1102518146';
+$db   = 'Mi_base_datos';
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+$resultado = $conn->query("SELECT * FROM mensajes ORDER BY id DESC");
+
+$mensajes = [];
+while ($fila = $resultado->fetch_assoc()) {
+    $mensajes[] = $fila['contenido'];
+}
+
+echo json_encode($mensajes);
+$conn->close();
+?>
